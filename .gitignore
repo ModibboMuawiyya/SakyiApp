@@ -1,0 +1,16 @@
+bin
+obj
+.vscode
+.DS_Store
+appsettings.json
+*.db
+.vs/SakyiApp/DesignTimeBuild/.dtbcache
+.vs/SakyiApp/v15/.suo
+.vs/SakyiApp/v15/Server/sqlite3/storage.ide
+.vs/SakyiApp/v15/Server/sqlite3/db.lock
+.vs/SakyiApp/v15/Server/sqlite3/storage.ide-shm
+
+.vs/SakyiApp/v15/Server/sqlite3/storage.ide-wal
+.vs/SakyiApp/v16/.suo
+.vs/SakyiApp/v16/Server/sqlite3/storage.ide
+.vs/SakyiApp/v16/Server/sqlite3/db.lock
