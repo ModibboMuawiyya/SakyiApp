@@ -1,15 +1,17 @@
-import React from 'react'
+import React, { SyntheticEvent } from 'react'
 import { Button, Item, Segment } from 'semantic-ui-react'
 import { IFabric } from '../../../app/modules/fabric'
 
 
-interface Iprops{
+interface Iprops {
     fabrics: IFabric[];
     selectFabric: (id: string) => void;
-    deleteFabric :(id:string) => void;
+    deleteFabric: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
+    submitting: boolean;
+    target: string
 }
 
-export const FabricList: React.FC<Iprops> = ({fabrics, selectFabric, deleteFabric}) => {
+export const FabricList: React.FC<Iprops> = ({ fabrics, selectFabric, deleteFabric, submitting, target }) => {
     return (
         <Segment clearing>
             <Item.Group relaxed>
@@ -21,20 +23,24 @@ export const FabricList: React.FC<Iprops> = ({fabrics, selectFabric, deleteFabri
                             <Item.Header>{fabric.title}</Item.Header>
                             <Item.Description>{fabric.description}</Item.Description>
                             <Item.Description>{fabric.date}</Item.Description>
+                            <Item.Description>Quantity: {fabric.quantity}</Item.Description>
+                            <Item.Description>Price: {fabric.price}</Item.Description>
                             <Item.Extra>
                                 <Button
                                     onClick={() => selectFabric(fabric.id)}
                                     floated='right'
                                     color='purple'
                                     content='View'
-                                /> 
+                                />
                                 <Button
-                                    onClick={() => deleteFabric(fabric.id)}
+                                    name={fabric.id}
+                                    loading={target === fabric.id && submitting}
+                                    onClick={(e) => deleteFabric(e, fabric.id)}
                                     floated='right'
                                     color='red'
                                     content='Delete'
-                                />  
-                             </Item.Extra>
+                                />
+                            </Item.Extra>
                         </Item.Content>
                     </Item>
                 ))}

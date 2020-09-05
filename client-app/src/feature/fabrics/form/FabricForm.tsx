@@ -2,19 +2,22 @@ import React, { useState, FormEvent } from 'react'
 import { Segment, Form, Button } from 'semantic-ui-react'
 import { IFabric } from '../../../app/modules/fabric'
 import { v4 as uuid } from 'uuid';
+import * as NumericInput from "react-numeric-input";
 
 interface IProps {
     setEditMode: (editMode: boolean) => void;
     fabric: IFabric;
     createFabric: (fabric: IFabric) => void;
     editFabric: (fabric: IFabric) => void;
+    submitting: boolean;
 }
 
 export const FabricForm: React.FC<IProps> = ({
     setEditMode,
     fabric: initialFormState,
     createFabric,
-    editFabric
+    editFabric,
+    submitting
 }) => {
 
     const initializeForm = () => {
@@ -34,73 +37,82 @@ export const FabricForm: React.FC<IProps> = ({
 
     const [fabric, setFabric] = useState<IFabric>(initializeForm)
 
+    function refreshPage() {
+        window.location.reload(false);
+    }
+
     const handleSubmit = () => {
         if (fabric.id.length === 0) {
             let newFabric = {
                 ...fabric,
                 id: uuid()
             }
+
             createFabric(newFabric);
         } else {
             editFabric(fabric);
         }
     }
-    const handleInputChange = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (event: any) => {
         const { name, value } = event.currentTarget;
-        setFabric({ ...fabric, [name]: value })
+        setFabric({ ...fabric, [name]: event.currentTarget.type === 'number' ? parseInt(value) : value })
     }
+
 
     return (
         <Segment clearing>
             <Form onSubmit={handleSubmit}>
                 <Form.Input
-                 onChange={handleInputChange}
-                 name='title' 
-                 placeholder='Title' 
-                 value={fabric.title}
-                  />
-
-                <Form.TextArea 
-                rows={2} 
-                onChange={handleInputChange} 
-                name='description' 
-                placeholder='Description' 
-                value={fabric.description} 
+                    onChange={handleInputChange}
+                    name='title'
+                    placeholder='Title'
+                    value={fabric.title}
                 />
 
-                <Form.Input 
-                type='datetime-local' 
-                onChange={handleInputChange} 
-                name='date' 
-                placeholder='Date' 
-                value={fabric.date} 
+                <Form.TextArea
+                    rows={2}
+                    onChange={handleInputChange}
+                    name='description'
+                    placeholder='Description'
+                    value={fabric.description}
                 />
 
-                <Form.Input 
-                placeholder='Quantity' 
-                onChange={handleInputChange} 
-                name='quantity' 
-                value={fabric.quantity} 
+                <Form.Input
+                    type='datetime-local'
+                    onChange={handleInputChange}
+                    name='date'
+                    placeholder='Date'
+                    value={fabric.date}
                 />
 
-                <Form.Input 
-                placeholder='Price' 
-                onChange={handleInputChange} 
-                name='price' 
-                value={fabric.price} 
+                <Form.Input
+                    placeholder='Quantity'
+                    onChange={handleInputChange}
+                    value={fabric.quantity}
+                    name='quantity'
+                    type='number'
+                />
+
+                <Form.Input
+                    placeholder='Price'
+                    onChange={handleInputChange}
+                    value={fabric.price}
+                    name='price'
+                    type='number'
                 />
 
                 <Button
-                 floated='right' 
-                 positive type='submit' 
-                 content='Submit' 
-                 />
+                    loading={submitting}
+                    floated='right'
+                    positive type='submit'
+                    content='Submit'
+                />
 
-                <Button 
-                onClick={() => setEditMode(false)} 
-                floated='right' 
-                type='button' 
-                content='Cancel' 
+                <Button
+                    onClick={() => setEditMode(false)}
+                    floated='right'
+                    type='button'
+                    content='Cancel'
                 />
             </Form>
 
