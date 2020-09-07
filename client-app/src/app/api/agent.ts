@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 import { IFabric } from "../modules/fabric";
-import { resolve } from "dns";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 

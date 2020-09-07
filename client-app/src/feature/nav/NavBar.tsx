@@ -1,26 +1,26 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Menu, Container, Button } from 'semantic-ui-react'
+import FabricStore from "../../app/stores/fabricStore";
+import { observer } from 'mobx-react-lite';
 
-interface IProps{
-    openCreateForm: ()=> void;
-}
 
-const NavBar: React.FC<IProps> = ({openCreateForm}) => {
+const NavBar: React.FC = () => {
+    const fabricStore = useContext(FabricStore)
     return (
         <Menu fixed='top' inverted>
             <Container>
                 <Menu.Item header>
-                    <img src="/assets/logo.jpg" alt="logo" style={{marginRight: 10}}/>
+                    <img src="/assets/logo.jpg" alt="logo" style={{ marginRight: 10 }} />
                     Sakyi
                 </Menu.Item>
-                <Menu.Item name='Fabrics'/>
+                <Menu.Item name='Fabrics' />
                 <Menu.Item name='messages'>
-                    <Button onClick={openCreateForm} positive content='Create Fabric'/>
+                    <Button onClick={fabricStore.openCreateForm} positive content='Create Fabric' />
                 </Menu.Item>
-            </Container>           
+            </Container>
         </Menu>
     )
 }
 
 
-export default NavBar
+export default observer(NavBar);
