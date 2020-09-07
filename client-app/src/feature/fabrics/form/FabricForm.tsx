@@ -1,25 +1,19 @@
-import React, { useState, FormEvent } from 'react'
+import React, { useState, useContext } from 'react'
 import { Segment, Form, Button } from 'semantic-ui-react'
 import { IFabric } from '../../../app/modules/fabric'
 import { v4 as uuid } from 'uuid';
-import * as NumericInput from "react-numeric-input";
+import FabricStore from '../../../app/stores/fabricStore'
+import { observer } from 'mobx-react-lite';
 
 interface IProps {
-    setEditMode: (editMode: boolean) => void;
     fabric: IFabric;
-    createFabric: (fabric: IFabric) => void;
-    editFabric: (fabric: IFabric) => void;
-    submitting: boolean;
 }
 
-export const FabricForm: React.FC<IProps> = ({
-    setEditMode,
+const FabricForm: React.FC<IProps> = ({
     fabric: initialFormState,
-    createFabric,
-    editFabric,
-    submitting
 }) => {
-
+    const fabricStore = useContext(FabricStore)
+    const { createFabric, editFabric, submitting, cancelFormOpen } = fabricStore;
     const initializeForm = () => {
         if (initialFormState) {
             return initialFormState
@@ -36,10 +30,6 @@ export const FabricForm: React.FC<IProps> = ({
     };
 
     const [fabric, setFabric] = useState<IFabric>(initializeForm)
-
-    function refreshPage() {
-        window.location.reload(false);
-    }
 
     const handleSubmit = () => {
         if (fabric.id.length === 0) {
@@ -109,7 +99,7 @@ export const FabricForm: React.FC<IProps> = ({
                 />
 
                 <Button
-                    onClick={() => setEditMode(false)}
+                    onClick={cancelFormOpen}
                     floated='right'
                     type='button'
                     content='Cancel'
@@ -119,3 +109,5 @@ export const FabricForm: React.FC<IProps> = ({
         </Segment>
     )
 }
+
+export default observer(FabricForm);

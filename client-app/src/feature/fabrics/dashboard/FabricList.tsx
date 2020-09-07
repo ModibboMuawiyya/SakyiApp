@@ -1,21 +1,17 @@
-import React, { SyntheticEvent } from 'react'
+import React, { useContext } from 'react'
 import { Button, Item, Segment } from 'semantic-ui-react'
-import { IFabric } from '../../../app/modules/fabric'
+import { observer } from 'mobx-react-lite';
+import FabricStore from '../../../app/stores/fabricStore'
 
 
-interface Iprops {
-    fabrics: IFabric[];
-    selectFabric: (id: string) => void;
-    deleteFabric: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
-    submitting: boolean;
-    target: string
-}
 
-export const FabricList: React.FC<Iprops> = ({ fabrics, selectFabric, deleteFabric, submitting, target }) => {
+const FabricList: React.FC = () => {
+    const fabricStore = useContext(FabricStore);
+    const { fabricsByDate, selectFabric, deleteFabric, submitting, target } = fabricStore;
     return (
         <Segment clearing>
             <Item.Group relaxed>
-                {fabrics.map(fabric => (
+                {fabricsByDate.map(fabric => (
                     <Item key={fabric.id}>
                         {/* <Item.Image size='small' src='https://react.semantic-ui.com/images/wireframe/image.png' /> */}
 
@@ -47,4 +43,6 @@ export const FabricList: React.FC<Iprops> = ({ fabrics, selectFabric, deleteFabr
             </Item.Group>
         </Segment>
     )
-}
+};
+
+export default observer(FabricList);
