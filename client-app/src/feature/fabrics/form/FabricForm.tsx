@@ -1,35 +1,48 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Segment, Form, Button } from 'semantic-ui-react'
 import { IFabric } from '../../../app/modules/fabric'
 import { v4 as uuid } from 'uuid';
 import FabricStore from '../../../app/stores/fabricStore'
 import { observer } from 'mobx-react-lite';
+import { RouteComponentProps } from 'react-router-dom';
 
-interface IProps {
-    fabric: IFabric;
+interface DetailParams {
+    id: string
 }
 
-const FabricForm: React.FC<IProps> = ({
-    fabric: initialFormState,
-}) => {
+const FabricForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
     const fabricStore = useContext(FabricStore)
-    const { createFabric, editFabric, submitting, cancelFormOpen } = fabricStore;
-    const initializeForm = () => {
-        if (initialFormState) {
-            return initialFormState
-        } else {
-            return {
-                id: '',
-                title: '',
-                description: '',
-                date: '',
-                quantity: 0,
-                price: 0
-            };
-        }
-    };
+    const {
+        createFabric,
+        editFabric,
+        submitting,
+        fabric: initialFormState,
+        loadFabric,
+        clearFabric
+    } = fabricStore;
 
-    const [fabric, setFabric] = useState<IFabric>(initializeForm)
+
+
+
+    const [fabric, setFabric] = useState<IFabric>({
+        id: '',
+        title: '',
+        description: '',
+        date: '',
+        quantity: 0,
+        price: 0
+    })
+
+    useEffect(() => {
+        if (match.params.id && fabric.id.length === 0) {
+            loadFabric(match.params.id).then(() => {
+                initialFormState && setFabric(initialFormState)
+            });
+        }
+        return () => {
+            clearFabric()
+        }
+    }, [loadFabric, clearFabric, match.params.id, initialFormState, fabric.id.length]);
 
     const handleSubmit = () => {
         if (fabric.id.length === 0) {
@@ -38,11 +51,13 @@ const FabricForm: React.FC<IProps> = ({
                 id: uuid()
             }
 
-            createFabric(newFabric);
+            createFabric(newFabric).then(() => history.push(`/fabrics/${newFabric.id}`));
+
         } else {
-            editFabric(fabric);
+            editFabric(fabric).then(() => history.push(`/fabrics/${fabric.id}`));
         }
     }
+
     const handleInputChange = (event: any) => {
         const { name, value } = event.currentTarget;
         setFabric({ ...fabric, [name]: event.currentTarget.type === 'number' ? parseInt(value) : value })
@@ -99,7 +114,7 @@ const FabricForm: React.FC<IProps> = ({
                 />
 
                 <Button
-                    onClick={cancelFormOpen}
+                    onClick={() => history.push('/fabrics')}
                     floated='right'
                     type='button'
                     content='Cancel'

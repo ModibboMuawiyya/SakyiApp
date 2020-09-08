@@ -1,12 +1,23 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Card, Image, Button } from 'semantic-ui-react'
 import FabricStore from '../../../app/stores/fabricStore';
 import { observer } from 'mobx-react-lite';
+import { RouteComponentProps, Link } from 'react-router-dom';
+import { LoadingComponent } from '../../../app/layout/LoadingComponent';
 
-
-const FabricDetails: React.FC = () => {
+interface DetailParams {
+  id: string
+}
+const FabricDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
   const fabricStore = useContext(FabricStore)
-  const { selectedFabric: fabric, openEditForm, cancelSelectedFabric } = fabricStore
+  const { fabric, loadFabric, loadingInitial } = fabricStore
+
+  useEffect(() => {
+    loadFabric(match.params.id)
+  }, [loadFabric, match.params.id])
+
+  if (loadingInitial || !fabric) return <LoadingComponent content='Loading fabric...' />
+
   return (
     <Card fluid>
       <Image src='https://react.semantic-ui.com/images/avatar/large/matthew.png' wrapped ui={false} />
@@ -21,8 +32,8 @@ const FabricDetails: React.FC = () => {
       </Card.Content>
       <Card.Content extra>
         <Button.Group widths={2}>
-          <Button onClick={() => openEditForm(fabric!.id)} basic color='blue' content='Edit' />
-          <Button onClick={cancelSelectedFabric} basic color='grey' content='Cancel' />
+          <Button as={Link} to={`/manage/${fabric.id}`} basic color='blue' content='Edit' />
+          <Button onClick={() => history.push('/fabrics')} basic color='grey' content='Cancel' />
         </Button.Group>
       </Card.Content>
     </Card>

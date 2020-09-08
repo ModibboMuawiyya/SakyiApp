@@ -1,30 +1,34 @@
-import React, { useEffect, Fragment, useContext } from 'react';
+import React, { Fragment } from 'react';
 import { Container } from 'semantic-ui-react'
 import NavBar from '../../feature/nav/NavBar';
 import FabricDashboard from '../../feature/fabrics/dashboard/FabricDashboard'
-import { LoadingComponent } from './LoadingComponent';
-import FabricStore from '../stores/fabricStore';
 import { observer } from 'mobx-react-lite';
+import { Route, withRouter, RouteComponentProps } from 'react-router-dom';
+import HomePage from '../../feature/home/HomePage';
+import FabricForm from '../../feature/fabrics/form/FabricForm';
+import FabricDetails from '../../feature/fabrics/details/FabricDetails';
 
-const App = () => {
-  const fabricStore = useContext(FabricStore);
+const App: React.FC<RouteComponentProps> = ({ location }) => {
 
-  useEffect(() => {
-    fabricStore.loadFabrics();
-  }, [fabricStore])
-
-  if (fabricStore.loadingInitial) return <LoadingComponent content='Loading Fabrics......' />
 
   return (
     <Fragment >
-      <NavBar />
+      <Route exact path='/' component={HomePage} />
+      <Route path={'/(.+)'} render={() => (
+        <Fragment>
+          <NavBar />
+          <Container style={{ marginTop: '7em' }}>
+            <Route exact path='/fabrics' component={FabricDashboard} />
+            <Route path='/fabrics/:id' component={FabricDetails} />
+            <Route key={location.key} path={['/createFabrics', '/manage/:id']} component={FabricForm} />
+          </Container>
+        </Fragment>
 
-      <Container style={{ marginTop: '7em' }}>
-        <FabricDashboard />
-      </Container>
+      )} />
+
 
     </Fragment>
   );
 }
 
-export default observer(App);
+export default withRouter(observer(App));
