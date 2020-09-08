@@ -2,12 +2,13 @@ import React, { useContext } from 'react'
 import { Button, Item, Segment } from 'semantic-ui-react'
 import { observer } from 'mobx-react-lite';
 import FabricStore from '../../../app/stores/fabricStore'
+import { Link } from 'react-router-dom';
 
 
 
 const FabricList: React.FC = () => {
     const fabricStore = useContext(FabricStore);
-    const { fabricsByDate, selectFabric, deleteFabric, submitting, target } = fabricStore;
+    const { fabricsByDate, deleteFabric, submitting, target } = fabricStore;
     return (
         <Segment clearing>
             <Item.Group relaxed>
@@ -23,7 +24,7 @@ const FabricList: React.FC = () => {
                             <Item.Description>Price: {fabric.price}</Item.Description>
                             <Item.Extra>
                                 <Button
-                                    onClick={() => selectFabric(fabric.id)}
+                                    as={Link} to={`/fabrics/${fabric.id}`}
                                     floated='right'
                                     color='purple'
                                     content='View'

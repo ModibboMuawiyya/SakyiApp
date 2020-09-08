@@ -7,10 +7,8 @@ configure({ enforceActions: "always" });
 
 class FabricStore {
   @observable fabricRegistry = new Map();
-  @observable fabrics: IFabric[] = [];
-  @observable selectedFabric: IFabric | undefined;
+  @observable fabric: IFabric | null = null;
   @observable loadingInitial = false;
-  @observable editMode = false;
   @observable submitting = false;
   @observable target = "";
 
@@ -39,9 +37,37 @@ class FabricStore {
     }
   };
 
+  @action loadFabric = async (id: string) => {
+    let fabric = this.getFabric(id);
+    if (fabric) {
+      this.fabric = fabric;
+    } else {
+      this.loadingInitial = true;
+      try {
+        fabric = await agent.Fabrics.details(id);
+        runInAction("getting Fabric", () => {
+          this.fabric = fabric;
+          this.loadingInitial = false;
+        });
+      } catch (error) {
+        runInAction("getting Fabric Error", () => {
+          this.loadingInitial = false;
+        });
+        console.log(error);
+      }
+    }
+  };
+
+  @action clearFabric = () => {
+    this.fabric = null;
+  };
+
+  getFabric = (id: string) => {
+    return this.fabricRegistry.get(id);
+  };
+
   @action selectFabric = (id: string) => {
-    this.selectedFabric = this.fabricRegistry.get(id);
-    this.editMode = false;
+    this.fabric = this.fabricRegistry.get(id);
   };
 
   @action createFabric = async (fabric: IFabric) => {
@@ -50,7 +76,6 @@ class FabricStore {
       await agent.Fabrics.create(fabric);
       runInAction("Creating a fabric", () => {
         this.fabricRegistry.set(fabric.id, fabric);
-        this.editMode = false;
         this.submitting = false;
       });
     } catch (error) {
@@ -67,8 +92,7 @@ class FabricStore {
       await agent.Fabrics.update(fabric);
       runInAction("Editing Fabric", () => {
         this.fabricRegistry.set(fabric.id, fabric);
-        this.selectedFabric = fabric;
-        this.editMode = false;
+        this.fabric = fabric;
         this.submitting = false;
       });
     } catch (error) {
@@ -99,24 +123,6 @@ class FabricStore {
       });
       console.log(error);
     }
-  };
-
-  @action openCreateForm = () => {
-    this.editMode = true;
-    this.selectedFabric = undefined;
-  };
-
-  @action openEditForm = (id: string) => {
-    this.selectedFabric = this.fabricRegistry.get(id);
-    this.editMode = true;
-  };
-
-  @action cancelSelectedFabric = () => {
-    this.selectedFabric = undefined;
-  };
-
-  @action cancelFormOpen = () => {
-    this.editMode = false;
   };
 }
 

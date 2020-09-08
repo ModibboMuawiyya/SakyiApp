@@ -1,27 +1,26 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Grid } from 'semantic-ui-react'
 import FabricList from './FabricList'
-import FabricDetails from '../details/FabricDetails'
-import FabricForm from '../form/FabricForm'
 import { observer } from 'mobx-react-lite'
-import FabricStore from '../../../app/stores/fabricStore';
+import FabricStore from '../../../app/stores/fabricStore'
+import { LoadingComponent } from '../../../app/layout/LoadingComponent'
 
 
 const FabricDashboard: React.FC = () => {
     const fabricStore = useContext(FabricStore);
-    const { editMode, selectedFabric } = fabricStore;
+
+    useEffect(() => {
+        fabricStore.loadFabrics();
+    }, [fabricStore])
+
+    if (fabricStore.loadingInitial) return <LoadingComponent content='Loading Fabrics......' />
     return (
         <Grid>
             <Grid.Column width={10} >
                 <FabricList />
             </Grid.Column>
             <Grid.Column width={6}>
-                {selectedFabric && !editMode && <FabricDetails />}
-
-                {editMode && (<FabricForm
-                    key={(selectedFabric && selectedFabric.id) || 0}
-                    fabric={selectedFabric!}
-                />)}
+                <h2>Fabric Filters</h2>
             </Grid.Column>
         </Grid>
     )
