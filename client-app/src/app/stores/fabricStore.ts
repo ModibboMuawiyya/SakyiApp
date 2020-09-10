@@ -13,8 +13,20 @@ class FabricStore {
   @observable target = "";
 
   @computed get fabricsByDate() {
-    return Array.from(this.fabricRegistry.values()).sort(
+    return this.groupFabricsByDate(Array.from(this.fabricRegistry.values()));
+  }
+
+  groupFabricsByDate(fabrics: IFabric[]) {
+    const sortedFabrics = fabrics.sort(
       (a, b) => Date.parse(a.date) - Date.parse(b.date)
+    );
+    // const sortF = sortedFabrics.sort((a, b) => a.price - b.price);
+    return Object.entries(
+      sortedFabrics.reduce((fabrics, fabric) => {
+        const date = fabric.date.split("T")[0];
+        fabrics[date] = fabrics[date] ? [...fabrics[date], fabric] : [fabric];
+        return fabrics;
+      }, {} as { [key: string]: IFabric[] })
     );
   }
 
@@ -29,6 +41,7 @@ class FabricStore {
         });
         this.loadingInitial = false;
       });
+      console.log(this.groupFabricsByDate(fabrics));
     } catch (error) {
       runInAction("loading fabrics error", () => {
         console.log(error);
