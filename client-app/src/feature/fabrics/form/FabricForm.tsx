@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Segment, Form, Button } from 'semantic-ui-react'
+import { Segment, Form, Button, Grid } from 'semantic-ui-react'
 import { IFabric } from '../../../app/modules/fabric'
 import { v4 as uuid } from 'uuid';
 import FabricStore from '../../../app/stores/fabricStore'
@@ -65,63 +65,68 @@ const FabricForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, histor
 
 
     return (
-        <Segment clearing>
-            <Form onSubmit={handleSubmit}>
-                <Form.Input
-                    onChange={handleInputChange}
-                    name='title'
-                    placeholder='Title'
-                    value={fabric.title}
-                />
+        <Grid>
+            <Grid.Column width={10}>
+                <Segment clearing>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Input
+                            onChange={handleInputChange}
+                            name='title'
+                            placeholder='Title'
+                            value={fabric.title}
+                        />
 
-                <Form.TextArea
-                    rows={2}
-                    onChange={handleInputChange}
-                    name='description'
-                    placeholder='Description'
-                    value={fabric.description}
-                />
+                        <Form.TextArea
+                            rows={2}
+                            onChange={handleInputChange}
+                            name='description'
+                            placeholder='Description'
+                            value={fabric.description}
+                        />
 
-                <Form.Input
-                    type='datetime-local'
-                    onChange={handleInputChange}
-                    name='date'
-                    placeholder='Date'
-                    value={fabric.date}
-                />
+                        <Form.Input
+                            type='datetime-local'
+                            onChange={handleInputChange}
+                            name='date'
+                            placeholder='Date'
+                            value={fabric.date}
+                        />
 
-                <Form.Input
-                    placeholder='Quantity'
-                    onChange={handleInputChange}
-                    value={fabric.quantity}
-                    name='quantity'
-                    type='number'
-                />
+                        <Form.Input
+                            placeholder='Quantity'
+                            onChange={handleInputChange}
+                            value={fabric.quantity}
+                            name='quantity'
+                            type='number'
+                        />
 
-                <Form.Input
-                    placeholder='Price'
-                    onChange={handleInputChange}
-                    value={fabric.price}
-                    name='price'
-                    type='number'
-                />
+                        <Form.Input
+                            placeholder='Price'
+                            onChange={handleInputChange}
+                            value={fabric.price}
+                            name='price'
+                            type='number'
+                        />
 
-                <Button
-                    loading={submitting}
-                    floated='right'
-                    positive type='submit'
-                    content='Submit'
-                />
+                        <Button
+                            loading={submitting}
+                            floated='right'
+                            positive type='submit'
+                            content='Submit'
+                        />
 
-                <Button
-                    onClick={() => history.push('/fabrics')}
-                    floated='right'
-                    type='button'
-                    content='Cancel'
-                />
-            </Form>
+                        <Button
+                            onClick={() => history.push('/fabrics')}
+                            floated='right'
+                            type='button'
+                            content='Cancel'
+                        />
+                    </Form>
 
-        </Segment>
+                </Segment>
+            </Grid.Column>
+        </Grid>
+
     )
 }
 

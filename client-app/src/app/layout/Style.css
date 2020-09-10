@@ -5,8 +5,39 @@ body {
 .ui.inverted.top.fixed.menu {
   background-image: linear-gradient(
     135deg,
-    rgb(148,0,211) 0%,
-    rgb(221,160,221) 69%,
-    rgb(230,230,250) 79%
+    rgb(148, 0, 211) 0%,
+    rgb(221, 160, 221) 69%,
+    rgb(230, 230, 250) 79%
   ) !important;
 }
+
+/*home page styles*/
+
+.masthead {
+  display: flex;
+  align-items: center;
+  background-image: linear-gradient(
+    135deg,
+    rgb(148, 0, 211) 0%,
+    rgb(184, 101, 184) 69%,
+    rgb(219, 130, 236) 89%
+  ) !important;
+  height: 100vh;
+}
+
+.masthead .ui.menu .ui.button,
+.ui.menu a.ui.inverted.button {
+  margin-left: 0.5em;
+}
+
+.masthead h1.ui.header {
+  font-size: 4em;
+  font-weight: normal;
+}
+
+.masthead h2 {
+  font-size: 1.7em;
+  font-weight: normal;
+}
+
+/*end home page styles*/
