@@ -41,12 +41,11 @@ class FabricStore {
         });
         this.loadingInitial = false;
       });
-      console.log(this.groupFabricsByDate(fabrics));
     } catch (error) {
       runInAction("loading fabrics error", () => {
         console.log(error);
+        this.loadingInitial = false;
       });
-      this.loadingInitial = false;
     }
   };
 

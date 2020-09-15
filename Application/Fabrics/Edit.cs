@@ -1,6 +1,9 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
+using FluentValidation;
 using MediatR;
 using Persistence;
 
@@ -19,6 +22,18 @@ namespace Application.Fabrics
 
         }
 
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Title).NotEmpty();
+                RuleFor(x => x.Description).NotEmpty();
+                RuleFor(x => x.Date).NotEmpty();
+                RuleFor(x => x.Quantity).NotEmpty();
+                RuleFor(x => x.Price).NotEmpty();
+            }
+        }
+
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
@@ -29,11 +44,9 @@ namespace Application.Fabrics
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var fabric = await _context.Fabrics.FindAsync(request.Id);     
+                var fabric = await _context.Fabrics.FindAsync(request.Id);
                 if (fabric == null)
-                {
-                  throw new Exception("Could not find Fabric");   
-                }
+                    throw new RestException(HttpStatusCode.NotFound, new { fabric = "Not Found" });
 
                 fabric.Title = request.Title ?? fabric.Title;
                 fabric.Description = request.Description ?? fabric.Description;
