@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Domain;
 using MediatR;
 using Persistence;
+using FluentValidation;
 
 namespace Application.Fabrics
 {
@@ -20,6 +21,20 @@ namespace Application.Fabrics
 
         }
 
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Title).NotEmpty();
+                RuleFor(x => x.Description).NotEmpty();
+                RuleFor(x => x.Date).NotEmpty();
+                RuleFor(x => x.Quantity).NotEmpty();
+                RuleFor(x => x.Price).NotEmpty();
+            }
+        }
+
+
+
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
@@ -30,21 +45,22 @@ namespace Application.Fabrics
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-               var fabric = new Fabric{
-                   Id = request.Id,
-                   Title = request.Title,
-                   Description = request.Description,
-                   Date = request.Date,
-                   Quantity = request.Quantity,
-                   Price = request.Price
-               };
-               _context.Fabrics.Add(fabric);
-               
-               var success = await _context.SaveChangesAsync() > 0;
+                var fabric = new Fabric
+                {
+                    Id = request.Id,
+                    Title = request.Title,
+                    Description = request.Description,
+                    Date = request.Date,
+                    Quantity = request.Quantity,
+                    Price = request.Price
+                };
+                _context.Fabrics.Add(fabric);
 
-               if (success) return Unit.Value;
+                var success = await _context.SaveChangesAsync() > 0;
 
-               throw new Exception("Problem Saving Changes");              
+                if (success) return Unit.Value;
+
+                throw new Exception("Problem Saving Changes");
             }
         }
     }
