@@ -2,6 +2,8 @@ import { observable, action, computed, configure, runInAction } from "mobx";
 import { createContext, SyntheticEvent } from "react";
 import { IFabric } from "../modules/fabric";
 import agent from "../api/agent";
+import { history } from "../..";
+import { toast } from "react-toastify";
 
 configure({ enforceActions: "always" });
 
@@ -18,12 +20,12 @@ class FabricStore {
 
   groupFabricsByDate(fabrics: IFabric[]) {
     const sortedFabrics = fabrics.sort(
-      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+      (a, b) => a.date.getTime() - b.date.getTime()
     );
     // const sortF = sortedFabrics.sort((a, b) => a.price - b.price);
     return Object.entries(
       sortedFabrics.reduce((fabrics, fabric) => {
-        const date = fabric.date.split("T")[0];
+        const date = fabric.date.toISOString().split("T")[0];
         fabrics[date] = fabrics[date] ? [...fabrics[date], fabric] : [fabric];
         return fabrics;
       }, {} as { [key: string]: IFabric[] })
@@ -36,7 +38,7 @@ class FabricStore {
       const fabrics = await agent.Fabrics.list();
       runInAction("loading fabrics", () => {
         fabrics.forEach((fabric) => {
-          fabric.date = fabric.date.split(".")[0];
+          fabric.date = new Date(fabric.date);
           this.fabricRegistry.set(fabric.id, fabric);
         });
         this.loadingInitial = false;
@@ -53,14 +55,18 @@ class FabricStore {
     let fabric = this.getFabric(id);
     if (fabric) {
       this.fabric = fabric;
+      return fabric;
     } else {
       this.loadingInitial = true;
       try {
         fabric = await agent.Fabrics.details(id);
         runInAction("getting Fabric", () => {
+          fabric.date = new Date(fabric.date);
           this.fabric = fabric;
+          this.fabricRegistry.set(fabric.id, fabric);
           this.loadingInitial = false;
         });
+        return fabric;
       } catch (error) {
         runInAction("getting Fabric Error", () => {
           this.loadingInitial = false;
@@ -90,10 +96,12 @@ class FabricStore {
         this.fabricRegistry.set(fabric.id, fabric);
         this.submitting = false;
       });
+      history.push(`/fabrics/${fabric.id}`);
     } catch (error) {
       runInAction("Creating Fabric Error", () => {
         this.submitting = false;
       });
+      toast.error("Problem Submitting Data");
       console.log(error);
     }
   };
@@ -107,11 +115,13 @@ class FabricStore {
         this.fabric = fabric;
         this.submitting = false;
       });
+      history.push(`/fabrics/${fabric.id}`);
     } catch (error) {
       runInAction("Editing Fabric Error", () => {
         this.submitting = false;
       });
-      console.log(error);
+      toast.error("Problem Submitting Data");
+      console.log(error.response);
     }
   };
 
