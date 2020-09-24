@@ -1,10 +1,35 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Segment, Form, Button, Grid } from 'semantic-ui-react'
-import { IFabric } from '../../../app/modules/fabric'
+import { FabricFormValues } from '../../../app/modules/fabric'
 import { v4 as uuid } from 'uuid';
 import FabricStore from '../../../app/stores/fabricStore'
 import { observer } from 'mobx-react-lite';
 import { RouteComponentProps } from 'react-router-dom';
+import { Form as FinalForm, Field } from 'react-final-form'
+import TextInput from '../../../app/common/form/TextInput';
+import NumberInput from '../../../app/common/form/NumberInput';
+import TextAreaInput from '../../../app/common/form/TextAreaInput';
+import DateInput from '../../../app/common/form/DateInput';
+import { combineDateAndTime, convertPriceToInt } from '../../../app/common/util/util';
+import { combineValidators, composeValidators, hasLengthGreaterThan, isNumeric, isRequired } from 'revalidate'
+
+const validate = combineValidators({
+    title: isRequired({ message: 'The fabric Name is required' }),
+    description: composeValidators(
+        isRequired('Description'),
+        hasLengthGreaterThan(3)({ message: 'Description to be at least 4 characters' })
+    )(),
+    price: composeValidators(
+        isRequired('Price'),
+        isNumeric('Price')
+    )('Price'),
+    quantity: composeValidators(
+        isRequired('Quantity'),
+        isNumeric('Quantity')
+    )('Quantity'),
+    date: isRequired('Date'),
+    time: isRequired('Time')
+})
 
 interface DetailParams {
     id: string
@@ -16,51 +41,44 @@ const FabricForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, histor
         createFabric,
         editFabric,
         submitting,
-        fabric: initialFormState,
-        loadFabric,
-        clearFabric
+        loadFabric
     } = fabricStore;
 
 
 
 
-    const [fabric, setFabric] = useState<IFabric>({
-        id: '',
-        title: '',
-        description: '',
-        date: '',
-        quantity: 0,
-        price: 0
-    })
+    const [fabric, setFabric] = useState(new FabricFormValues())
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        if (match.params.id && fabric.id.length === 0) {
-            loadFabric(match.params.id).then(() => {
-                initialFormState && setFabric(initialFormState)
-            });
+        if (match.params.id) {
+            setLoading(true)
+            loadFabric(match.params.id).then((fabric) => setFabric(new FabricFormValues(fabric))
+            ).finally(() => setLoading(false));
         }
-        return () => {
-            clearFabric()
-        }
-    }, [loadFabric, clearFabric, match.params.id, initialFormState, fabric.id.length]);
+    }, [loadFabric, match.params.id]);
 
-    const handleSubmit = () => {
-        if (fabric.id.length === 0) {
+
+
+
+    const handleFinalFormSubmit = (values: any) => {
+        const dateAndTime = combineDateAndTime(values.date, values.time);
+        const { date, time, price, quantity, ...fabric } = values;
+        const quantityToInt = convertPriceToInt(values.quantity)
+        const priceToInt = convertPriceToInt(values.price)
+        fabric.date = dateAndTime;
+        fabric.quantity = quantityToInt;
+        fabric.price = priceToInt
+        console.log(values)
+        if (!fabric.id) {
             let newFabric = {
                 ...fabric,
                 id: uuid()
             }
-
-            createFabric(newFabric).then(() => history.push(`/fabrics/${newFabric.id}`));
-
+            createFabric(newFabric)
         } else {
-            editFabric(fabric).then(() => history.push(`/fabrics/${fabric.id}`));
+            editFabric(fabric)
         }
-    }
-
-    const handleInputChange = (event: any) => {
-        const { name, value } = event.currentTarget;
-        setFabric({ ...fabric, [name]: event.currentTarget.type === 'number' ? parseInt(value) : value })
     }
 
 
@@ -68,60 +86,81 @@ const FabricForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, histor
         <Grid>
             <Grid.Column width={10}>
                 <Segment clearing>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Input
-                            onChange={handleInputChange}
-                            name='title'
-                            placeholder='Title'
-                            value={fabric.title}
-                        />
+                    <FinalForm
+                        validate={validate}
+                        initialValues={fabric}
+                        onSubmit={handleFinalFormSubmit}
+                        render={({ handleSubmit, invalid, pristine }) => (
+                            <Form onSubmit={handleSubmit} loading={loading}>
+                                <Field
+                                    // onChange={handleInputChange}
 
-                        <Form.TextArea
-                            rows={2}
-                            onChange={handleInputChange}
-                            name='description'
-                            placeholder='Description'
-                            value={fabric.description}
-                        />
+                                    name='title'
+                                    placeholder='Title'
+                                    value={fabric.title}
+                                    component={TextInput}
+                                />
 
-                        <Form.Input
-                            type='datetime-local'
-                            onChange={handleInputChange}
-                            name='date'
-                            placeholder='Date'
-                            value={fabric.date}
-                        />
+                                <Field
+                                    component={TextAreaInput}
+                                    name='description'
+                                    rows={3}
+                                    placeholder='Description'
+                                    value={fabric.description}
+                                />
 
-                        <Form.Input
-                            placeholder='Quantity'
-                            onChange={handleInputChange}
-                            value={fabric.quantity}
-                            name='quantity'
-                            type='number'
-                        />
+                                <Form.Group>
+                                    <Field<Date>
+                                        name='date'
+                                        placeholder='Date'
+                                        date={true}
+                                        value={fabric.date}
+                                        component={DateInput}
+                                    />
+                                    <Field<Date>
+                                        name='time'
+                                        time={true}
+                                        placeholder='Time'
+                                        value={fabric.time}
+                                        component={DateInput}
+                                    />
+                                </Form.Group>
 
-                        <Form.Input
-                            placeholder='Price'
-                            onChange={handleInputChange}
-                            value={fabric.price}
-                            name='price'
-                            type='number'
-                        />
 
-                        <Button
-                            loading={submitting}
-                            floated='right'
-                            positive type='submit'
-                            content='Submit'
-                        />
+                                <Field<number>
+                                    placeholder='Quantity'
+                                    value={fabric.quantity}
+                                    name='quantity'
+                                    component={NumberInput}
+                                    type='number'
+                                />
 
-                        <Button
-                            onClick={() => history.push('/fabrics')}
-                            floated='right'
-                            type='button'
-                            content='Cancel'
-                        />
-                    </Form>
+                                <Field
+                                    placeholder='Price'
+                                    value={fabric.price}
+                                    name='price'
+                                    component={NumberInput}
+                                    type='number'
+                                />
+
+                                <Button
+                                    disabled={loading || invalid || pristine}
+                                    loading={submitting}
+                                    floated='right'
+                                    positive type='submit'
+                                    content='Submit'
+                                />
+
+                                <Button
+                                    disabled={loading}
+                                    onClick={fabric.id ? () => history.push(`/fabrics/${fabric.id}`) : () => history.push('/fabrics')}
+                                    floated='right'
+                                    type='button'
+                                    content='Cancel'
+                                />
+                            </Form>
+                        )} />
+
 
                 </Segment>
             </Grid.Column>

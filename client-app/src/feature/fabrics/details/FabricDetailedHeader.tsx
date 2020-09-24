@@ -2,6 +2,8 @@ import React from 'react'
 import { Segment, Item, Header, Button, Image } from 'semantic-ui-react'
 import { IFabric } from '../../../app/modules/fabric';
 import { observer } from 'mobx-react-lite';
+import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
 
 const fabricImageStyle = {
     filter: 'brightness(30%)'
@@ -30,9 +32,9 @@ const FabricDetailedHeader: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
                                     content={fabric.title}
                                     style={{ color: 'white' }}
                                 />
-                                <p>{fabric.date}</p>
+                                <p>{format(fabric.date, 'eeee do MMMM')}</p>
                                 <p>
-                                    {fabric.description} <strong>Fabric</strong>
+                                    {fabric.description}
                                 </p>
                             </Item.Content>
                         </Item>
@@ -43,7 +45,7 @@ const FabricDetailedHeader: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
             <Segment clearing attached='bottom'>
                 <Button color='teal'>like </Button>
                 <Button>Cancel </Button>
-                <Button color='orange' floated='right'>
+                <Button as={Link} to={`/manage/${fabric.id}`} color='orange' floated='right'>
                     Manage Fabric
         </Button>
             </Segment>

@@ -2,6 +2,7 @@ import React from 'react'
 import { Segment, Grid, Icon } from 'semantic-ui-react'
 import { observer } from 'mobx-react-lite';
 import { IFabric } from '../../../app/modules/fabric';
+import { format } from 'date-fns';
 
 const FabricDetailedInfo: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
     return (
@@ -23,7 +24,7 @@ const FabricDetailedInfo: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
                     </Grid.Column>
                     <Grid.Column width={15}>
                         <span>
-                            {fabric.date}
+                            {format(fabric.date, 'eeee do MMMM')} at {format(fabric.date, 'h:mm a')}
                         </span>
                     </Grid.Column>
                 </Grid>
