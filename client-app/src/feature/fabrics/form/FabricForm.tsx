@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react'
 import { Segment, Form, Button, Grid } from 'semantic-ui-react'
 import { FabricFormValues } from '../../../app/modules/fabric'
 import { v4 as uuid } from 'uuid';
-import FabricStore from '../../../app/stores/fabricStore'
 import { observer } from 'mobx-react-lite';
 import { RouteComponentProps } from 'react-router-dom';
 import { Form as FinalForm, Field } from 'react-final-form'
@@ -12,6 +11,7 @@ import TextAreaInput from '../../../app/common/form/TextAreaInput';
 import DateInput from '../../../app/common/form/DateInput';
 import { combineDateAndTime, convertPriceToInt } from '../../../app/common/util/util';
 import { combineValidators, composeValidators, hasLengthGreaterThan, isNumeric, isRequired } from 'revalidate'
+import { RootStoreContext } from '../../../app/stores/rootStore';
 
 const validate = combineValidators({
     title: isRequired({ message: 'The fabric Name is required' }),
@@ -36,13 +36,13 @@ interface DetailParams {
 }
 
 const FabricForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
-    const fabricStore = useContext(FabricStore)
+    const rootStore = useContext(RootStoreContext)
     const {
         createFabric,
         editFabric,
         submitting,
         loadFabric
-    } = fabricStore;
+    } = rootStore.fabricStore;
 
 
 

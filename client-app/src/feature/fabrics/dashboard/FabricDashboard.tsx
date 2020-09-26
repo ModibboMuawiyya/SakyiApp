@@ -2,18 +2,18 @@ import React, { useContext, useEffect } from 'react'
 import { Grid } from 'semantic-ui-react'
 import FabricList from './FabricList'
 import { observer } from 'mobx-react-lite'
-import FabricStore from '../../../app/stores/fabricStore'
 import { LoadingComponent } from '../../../app/layout/LoadingComponent'
+import { RootStoreContext } from '../../../app/stores/rootStore'
 
 
 const FabricDashboard: React.FC = () => {
-    const fabricStore = useContext(FabricStore);
-
+    const rootStore = useContext(RootStoreContext);
+    const { loadFabrics, loadingInitial } = rootStore.fabricStore
     useEffect(() => {
-        fabricStore.loadFabrics();
-    }, [fabricStore])
+        loadFabrics();
+    }, [loadFabrics])
 
-    if (fabricStore.loadingInitial) return <LoadingComponent content='Loading Fabrics......' />
+    if (loadingInitial) return <LoadingComponent content='Loading Fabrics......' />
     return (
         <Grid>
             <Grid.Column width={10} >
