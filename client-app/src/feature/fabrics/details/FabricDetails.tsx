@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react'
 import { Grid, GridColumn } from 'semantic-ui-react'
-import FabricStore from '../../../app/stores/fabricStore';
 import { observer } from 'mobx-react-lite';
 import { RouteComponentProps } from 'react-router-dom';
 import { LoadingComponent } from '../../../app/layout/LoadingComponent';
@@ -8,13 +7,14 @@ import FabricDetailedInfo from './FabricDetailedInfo';
 import FabricDetailedHeader from './FabricDetailedHeader';
 import { FabricDetailedChat } from './FabricDetailedChat';
 import { FabricDetailedSideBar } from './FabricDetailedSideBar';
+import { RootStoreContext } from '../../../app/stores/rootStore';
 
 interface DetailParams {
   id: string
 }
 const FabricDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
-  const fabricStore = useContext(FabricStore)
-  const { fabric, loadFabric, loadingInitial } = fabricStore
+  const rootStore = useContext(RootStoreContext)
+  const { fabric, loadFabric, loadingInitial } = rootStore.fabricStore
 
   useEffect(() => {
     loadFabric(match.params.id);
