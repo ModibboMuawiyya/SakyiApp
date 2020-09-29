@@ -2,6 +2,7 @@ import React from 'react'
 import { Item, Button, Segment, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { IFabric } from '../../../app/modules/fabric';
+import FabricListItemLikes from './FabricListItemLikes';
 
 const FabricListItem: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
 
@@ -28,6 +29,7 @@ const FabricListItem: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
                 <Icon name='money' /> {fabric.price}
                 <Icon name='cart' /> {fabric.quantity}
             </Segment>
+            <Segment secondary><FabricListItemLikes attendees={fabric.attendees} /></Segment>
             <Segment clearing>
                 <span>{fabric.description}</span>
                 <Button
