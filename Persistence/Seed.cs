@@ -9,27 +9,36 @@ namespace Persistence
 {
     public class Seed
     {
-        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
+        public static async Task SeedData(DataContext context,
+            UserManager<AppUser> userManager)
         {
             if (!userManager.Users.Any())
             {
-                var users = new List<AppUser>{
-                    new AppUser{
+                var users = new List<AppUser>
+                {
+                    new AppUser
+                    {
+                        Id = "a",
                         DisplayName = "Bob",
-                        UserName ="Bob",
+                        UserName = "bob",
                         Email = "bob@test.com"
                     },
-                    new AppUser{
-                        DisplayName ="Modibbo",
-                        UserName ="King",
-                        Email="king@test.com"
+                    new AppUser
+                    {
+                        Id = "b",
+                        DisplayName = "Jane",
+                        UserName = "jane",
+                        Email = "jane@test.com"
                     },
-                    new AppUser{
-                        DisplayName ="Sarah",
-                        UserName ="Sarah",
-                        Email="sarah@test.com"
-                    }
+                    new AppUser
+                    {
+                        Id = "c",
+                        DisplayName = "Tom",
+                        UserName = "tom",
+                        Email = "tom@test.com"
+                    },
                 };
+
                 foreach (var user in users)
                 {
                     await userManager.CreateAsync(user, "Pa$$word1");
@@ -38,90 +47,277 @@ namespace Persistence
 
             if (!context.Fabrics.Any())
             {
-                var fabrics = new List<Fabric>{
+                var fabrics = new List<Fabric>
+                {
                     new Fabric
                     {
-                        Title = "Cashmere",
+                        Title = "Past Activity 1",
                         Date = DateTime.Now.AddMonths(-2),
                         Description = "Activity 2 months ago",
+                        Price = 3000,
                         Quantity = 10,
-                        Price = 2500,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            }
+                        }
                     },
                     new Fabric
                     {
-                        Title = "Getzner",
+                        Title = "Past Activity 1",
                         Date = DateTime.Now.AddMonths(-1),
-                        Description = "Activity 1 month ago",
+                        Description = "Activity 1 months ago",
+                        Price = 3000,
                         Quantity = 10,
-                        Price = 2500,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                        }
                     },
                     new Fabric
                     {
-                        Title = "Satin",
-                        Date = DateTime.Now.AddMonths(1),
-                        Description = "Activity 1 month in future",
-                        Quantity = 10,
-                        Price = 2500,
-                    },
-                    new Fabric
-                    {
-                        Title = "Shadda",
-                        Date = DateTime.Now.AddMonths(2),
-                        Description = "Activity 2 months in future",
-                        Quantity = 10,
-                        Price = 2500,
-                    },
-                    new Fabric
-                    {
-                        Title = "Lace",
-                        Date = DateTime.Now.AddMonths(3),
-                        Description = "Activity 3 months in future",
-                        Quantity = 10,
-                        Price = 2500,
-                    },
-                    new Fabric
-                    {
-                        Title = "Silk",
-                        Date = DateTime.Now.AddMonths(4),
-                        Description = "Activity 4 months in future",
-                       Quantity = 10,
-                        Price = 2500,
-                    },
-                    new Fabric
-                    {
-                        Title = "Wool",
-                        Date = DateTime.Now.AddMonths(5),
-                        Description = "Activity 5 months in future",
-                        Quantity = 10,
-                        Price = 2500,
-                    },
-                    new Fabric
-                    {
-                        Title = "Polymer",
-                        Date = DateTime.Now.AddMonths(6),
-                        Description = "Activity 6 months in future",
-                        Quantity = 10,
-                        Price = 2500,
-                    },
-                    new Fabric
-                    {
-                        Title = "Waax",
-                        Date = DateTime.Now.AddMonths(7),
+                        Title = "Past Activity 1",
+                        Date = DateTime.Now.AddMonths(-2),
                         Description = "Activity 2 months ago",
+                        Price = 3000,
                         Quantity = 10,
-                        Price = 2500,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                        }
+
                     },
                     new Fabric
                     {
-                        Title = "Ankara",
-                        Date = DateTime.Now.AddMonths(8),
-                        Description = "Activity 8 months in future",
+                        Title = "Past Activity 1",
+                        Date = DateTime.Now.AddMonths(-2),
+                        Description = "Activity 2 months ago",
+                        Price = 3000,
                         Quantity = 10,
-                        Price = 2500,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                        }
+                    },new Fabric
+                    {
+                        Title = "Past Activity 1",
+                        Date = DateTime.Now.AddMonths(-2),
+                        Description = "Activity 2 months ago",
+                        Price = 3000,
+                        Quantity = 10,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                        }
+                    },
+                    new Fabric
+                    {
+                        Title = "Past Activity 7",
+                        Date = DateTime.Now.AddMonths(-2),
+                        Description = "Activity 2 months ago",
+                        Price = 3000,
+                        Quantity = 10,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                             new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                        }
+                    },
+                    new Fabric
+                    {
+                        Title = "Past Activity 7",
+                        Date = DateTime.Now.AddMonths(-3),
+                        Description = "Activity 2 months ago",
+                        Price = 3000,
+                        Quantity = 10,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                             new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                        }
+                    },
+                    new Fabric
+                    {
+                        Title = "Past Activity 7",
+                        Date = DateTime.Now.AddMonths(-2),
+                        Description = "Activity 2 months ago",
+                        Price = 3000,
+                        Quantity = 10,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            }
+                        }
+                    },
+                   new Fabric
+                    {
+                        Title = "Past Activity 7",
+                        Date = DateTime.Now.AddMonths(-2),
+                        Description = "Activity 6 months ago",
+                        Price = 3000,
+                        Quantity = 10,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                             new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                        }
+                    },
+                    new Fabric
+                    {
+                        Title = "Past Activity 7",
+                        Date = DateTime.Now.AddMonths(-2),
+                        Description = "Activity 2 months ago",
+                        Price = 3000,
+                        Quantity = 10,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                             new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsOwner = false,
+                                DateVisited = DateTime.Now.AddMonths(-1)
+                            },
+                        }
+                    },
+                    new Fabric
+                    {
+                        Title = "Past Activity 7",
+                        Date = DateTime.Now.AddMonths(-2),
+                        Description = "Activity 2 months ago",
+                        Price = 3000,
+                        Quantity = 10,
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsOwner = true,
+                                DateVisited = DateTime.Now.AddMonths(-2)
+                            }
+                        }
                     }
                 };
-                context.Fabrics.AddRange(fabrics);
-                context.SaveChanges();
+
+                await context.Fabrics.AddRangeAsync(fabrics);
+                await context.SaveChangesAsync();
             }
         }
     }

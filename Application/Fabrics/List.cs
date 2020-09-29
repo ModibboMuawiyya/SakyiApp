@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,23 +11,26 @@ namespace Application.Fabrics
 {
     public class List
     {
-        public class Query : IRequest<List<Fabric>> { }
+        public class Query : IRequest<List<FabricDto>> { }
 
-        public class Handler : IRequestHandler<Query, List<Fabric>>
+        public class Handler : IRequestHandler<Query, List<FabricDto>>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IMapper _mapper;
+            public Handler(DataContext context, IMapper mapper)
             {
-               
+                _mapper = mapper;
+
                 _context = context;
 
             }
-            public async Task<List<Fabric>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<List<FabricDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                
-                var fabrics = await _context.Fabrics.ToListAsync();
 
-                return fabrics;
+                var fabrics = await _context.Fabrics
+                .ToListAsync();
+
+                return _mapper.Map<List<Fabric>, List<FabricDto>>(fabrics);
             }
         }
     }

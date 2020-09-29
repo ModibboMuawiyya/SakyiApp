@@ -5,6 +5,9 @@ using Domain;
 using MediatR;
 using Persistence;
 using FluentValidation;
+using System.Linq;
+using Application.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Fabrics
 {
@@ -38,8 +41,10 @@ namespace Application.Fabrics
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
             }
 
@@ -55,6 +60,19 @@ namespace Application.Fabrics
                     Price = request.Price
                 };
                 _context.Fabrics.Add(fabric);
+
+                var user = await _context.Users.SingleOrDefaultAsync(x =>
+                x.UserName == _userAccessor.GetCurrentUsername());
+
+                var client = new UserActivity
+                {
+                    AppUser = user,
+                    Fabric = fabric,
+                    IsOwner = true,
+                    DateVisited = DateTime.Now
+                };
+
+                _context.UserActivities.Add(client);
 
                 var success = await _context.SaveChangesAsync() > 0;
 
