@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
-namespace Domain
+namespace Application.Fabrics
 {
-    public class Fabric
+    public class FabricDto
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
@@ -11,6 +12,8 @@ namespace Domain
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
         public int Price { get; set; }
-        public virtual ICollection<UserActivity> UserActivities { get; set; }
+
+        [JsonPropertyName("clients")]
+        public ICollection<ClientDto> UserActivities { get; set; }
     }
 }

@@ -14,14 +14,14 @@ namespace Api.Controllers
     {
 
         [HttpGet]
-        public async Task<ActionResult<List<Fabric>>> List()
+        public async Task<ActionResult<List<FabricDto>>> List()
         {
             return await Mediator.Send(new List.Query());
         }
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<Fabric>> Details(Guid id)
+        public async Task<ActionResult<FabricDto>> Details(Guid id)
         {
             return await Mediator.Send(new Details.Query { Id = id });
         }
@@ -30,6 +30,7 @@ namespace Api.Controllers
         public async Task<ActionResult<Unit>> Create(Create.Command command) => await Mediator.Send(command);
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "IsFabricOwner")]
         public async Task<ActionResult<Unit>> Edit(Guid id, Edit.Command command)
         {
             command.Id = id;
@@ -37,10 +38,23 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "IsFabricOwner")]
         public async Task<ActionResult<Unit>> Delete(Guid id)
         {
 
             return await Mediator.Send(new Delete.Command { Id = id });
+        }
+
+        [HttpPost("{id}/{liked}")]
+        public async Task<ActionResult<Unit>> liked(Guid id)
+        {
+            return await Mediator.Send(new Liked.Command { Id = id });
+        }
+
+        [HttpDelete("{id}/liked")]
+        public async Task<ActionResult<Unit>> Unlike(Guid id)
+        {
+            return await Mediator.Send(new Unlike.Command { Id = id });
         }
     }
 }
