@@ -6,7 +6,7 @@ import { LoadingComponent } from '../../../app/layout/LoadingComponent';
 import FabricDetailedInfo from './FabricDetailedInfo';
 import FabricDetailedHeader from './FabricDetailedHeader';
 import { FabricDetailedChat } from './FabricDetailedChat';
-import { FabricDetailedSideBar } from './FabricDetailedSideBar';
+import FabricDetailedSideBar from './FabricDetailedSideBar';
 import { RootStoreContext } from '../../../app/stores/rootStore';
 
 interface DetailParams {
@@ -32,7 +32,7 @@ const FabricDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, his
         <FabricDetailedChat />
       </GridColumn>
       <GridColumn width={6}>
-        <FabricDetailedSideBar />
+        <FabricDetailedSideBar clients={fabric.clients} />
       </GridColumn>
 
     </Grid>

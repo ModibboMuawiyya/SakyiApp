@@ -1,24 +1,26 @@
 import React from 'react'
 import { Image, List, Popup } from 'semantic-ui-react'
-import { IAttendee } from '../../../app/modules/fabric'
+import { IClient } from '../../../app/modules/fabric'
 
 interface IProps {
-    attendees: IAttendee[]
+    clients: IClient[]
 }
 
-const FabricListItemLikes: React.FC<IProps> = ({ attendees }) => {
+const FabricListItemLikes: React.FC<IProps> = ({ clients }) => {
     return (
         <List horizontal>
-            {attendees.map((attendee) => (
-                <List.Item key={attendee.username}>
+            {clients.map((client) => (
+
+                <List.Item key={client.username}>
                     <Popup
-                        header={attendee.displayName}
+                        header={client.displayName}
                         trigger={
                             <Image
                                 size='mini'
                                 circular
-                                src={attendee.image || '/assets/user.png'}
+                                src={client.image || '/assets/user.png'}
                             />
+
                         }
                     />
                 </List.Item>

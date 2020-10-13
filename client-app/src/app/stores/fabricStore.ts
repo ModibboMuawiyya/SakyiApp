@@ -5,6 +5,8 @@ import agent from "../api/agent";
 import { history } from "../..";
 import { toast } from "react-toastify";
 import { RootStore } from "./rootStore";
+import { createClient, setFabricProps } from "../common/util/util";
+import { act } from "react-dom/test-utils";
 
 export default class FabricStore {
   rootStore: RootStore;
@@ -17,6 +19,7 @@ export default class FabricStore {
   @observable loadingInitial = false;
   @observable submitting = false;
   @observable target = "";
+  @observable loading = false;
 
   @computed get fabricsByDate() {
     return this.groupFabricsByDate(Array.from(this.fabricRegistry.values()));
@@ -38,11 +41,12 @@ export default class FabricStore {
 
   @action loadFabrics = async () => {
     this.loadingInitial = true;
+
     try {
       const fabrics = await agent.Fabrics.list();
       runInAction("loading fabrics", () => {
         fabrics.forEach((fabric) => {
-          fabric.date = new Date(fabric.date);
+          setFabricProps(fabric, this.rootStore.userStore.user!);
           this.fabricRegistry.set(fabric.id, fabric);
         });
         this.loadingInitial = false;
@@ -65,7 +69,7 @@ export default class FabricStore {
       try {
         fabric = await agent.Fabrics.details(id);
         runInAction("getting Fabric", () => {
-          fabric.date = new Date(fabric.date);
+          setFabricProps(fabric, this.rootStore.userStore.user!);
           this.fabric = fabric;
           this.fabricRegistry.set(fabric.id, fabric);
           this.loadingInitial = false;
@@ -96,6 +100,11 @@ export default class FabricStore {
     this.submitting = true;
     try {
       await agent.Fabrics.create(fabric);
+      const client = createClient(this.rootStore.userStore.user!);
+      client.isOwner = true;
+      let clients = [];
+      clients.push(client);
+      fabric.clients = clients;
       runInAction("Creating a fabric", () => {
         this.fabricRegistry.set(fabric.id, fabric);
         this.submitting = false;
@@ -148,6 +157,50 @@ export default class FabricStore {
         this.target = "";
       });
       console.log(error);
+    }
+  };
+
+  @action likeFabric = async () => {
+    const client = createClient(this.rootStore.userStore.user!);
+    this.loading = true;
+    try {
+      await agent.Fabrics.like(this.fabric!.id);
+      runInAction(() => {
+        if (this.fabric) {
+          this.fabric.clients.push(client);
+          this.fabric.liked = true;
+          this.fabricRegistry.set(this.fabric.id, this.fabric);
+          this.loading = false;
+        }
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loading = false;
+      });
+      toast.error("Problem Liking Fabric");
+    }
+  };
+
+  @action unlikeFabric = async () => {
+    this.loading = true;
+    try {
+      await agent.Fabrics.unlike(this.fabric!.id);
+
+      runInAction(() => {
+        if (this.fabric) {
+          this.fabric.clients = this.fabric.clients.filter(
+            (a) => a.username !== this.rootStore.userStore.user!.username
+          );
+          this.fabric.liked = false;
+          this.fabricRegistry.set(this.fabric.id, this.fabric);
+          this.loading = false;
+        }
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loading = false;
+      });
+      toast.error("Problem UnLiking Fabric");
     }
   };
 }

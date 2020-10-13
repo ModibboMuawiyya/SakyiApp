@@ -5,7 +5,9 @@ export interface IFabric {
   date: Date;
   quantity: number;
   price: number;
-  attendees: IAttendee[];
+  liked: boolean;
+  isOwner: boolean;
+  clients: IClient[];
 }
 
 export interface IFabricFormValues extends Partial<IFabric> {
@@ -31,7 +33,7 @@ export class FabricFormValues implements IFabricFormValues {
   }
 }
 
-export interface IAttendee {
+export interface IClient {
   username: string;
   displayName: string;
   image: string;
