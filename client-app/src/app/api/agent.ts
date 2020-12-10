@@ -62,6 +62,8 @@ const Fabrics = {
   create: (fabric: IFabric) => requests.post("/fabrics", fabric),
   update: (fabric: IFabric) => requests.put(`/fabrics/${fabric.id}`, fabric),
   delete: (id: string) => requests.del(`/fabrics/${id}`),
+  like: (id: string) => requests.post(`/fabrics/${id}/liked`, {}),
+  unlike: (id: string) => requests.del(`/fabrics/${id}/liked`),
 };
 
 const User = {

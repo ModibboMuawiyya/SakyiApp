@@ -5,6 +5,9 @@ export interface IFabric {
   date: Date;
   quantity: number;
   price: number;
+  liked: boolean;
+  isOwner: boolean;
+  clients: IClient[];
 }
 
 export interface IFabricFormValues extends Partial<IFabric> {
@@ -28,4 +31,11 @@ export class FabricFormValues implements IFabricFormValues {
 
     Object.assign(this, init);
   }
+}
+
+export interface IClient {
+  username: string;
+  displayName: string;
+  image: string;
+  isOwner: boolean;
 }

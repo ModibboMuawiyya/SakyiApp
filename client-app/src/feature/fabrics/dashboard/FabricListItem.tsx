@@ -1,7 +1,8 @@
 import React from 'react'
-import { Item, Button, Segment, Icon } from 'semantic-ui-react';
+import { Item, Button, Segment, Icon, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { IFabric } from '../../../app/modules/fabric';
+import FabricListItemLikes from './FabricListItemLikes';
 
 const FabricListItem: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
 
@@ -16,6 +17,14 @@ const FabricListItem: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
                         <Item.Content verticalAlign='middle'>
                             <Item.Header>{fabric.title}</Item.Header>
                             <Item.Description>{fabric.description}</Item.Description>
+                            {fabric.liked && !fabric.isOwner &&
+                                <Item.Description>
+                                    <Label basic
+                                        color='green'
+                                        content='You liked this Fabric'
+                                    />
+                                </Item.Description>
+                            }
                             <Item.Extra>
 
                             </Item.Extra>
@@ -28,6 +37,7 @@ const FabricListItem: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
                 <Icon name='money' /> {fabric.price}
                 <Icon name='cart' /> {fabric.quantity}
             </Segment>
+            <Segment secondary><FabricListItemLikes clients={fabric.clients} /></Segment>
             <Segment clearing>
                 <span>{fabric.description}</span>
                 <Button

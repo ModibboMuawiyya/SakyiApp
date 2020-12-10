@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Segment, Item, Header, Button, Image } from 'semantic-ui-react'
 import { IFabric } from '../../../app/modules/fabric';
 import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { RootStore, RootStoreContext } from '../../../app/stores/rootStore';
 
 const fabricImageStyle = {
     filter: 'brightness(30%)'
@@ -19,6 +20,9 @@ const fabricImageTextStyle = {
 };
 
 const FabricDetailedHeader: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
+    const rootStore = useContext(RootStoreContext);
+    const { likeFabric, unlikeFabric, loading } = rootStore.fabricStore
+
     return (
         <Segment.Group>
             <Segment basic attached='top' style={{ padding: '0' }}>
@@ -43,11 +47,16 @@ const FabricDetailedHeader: React.FC<{ fabric: IFabric }> = ({ fabric }) => {
             </Segment>
 
             <Segment clearing attached='bottom'>
-                <Button color='teal'>like </Button>
-                <Button>Cancel </Button>
-                <Button as={Link} to={`/manage/${fabric.id}`} color='orange' floated='right'>
-                    Manage Fabric
-        </Button>
+                {fabric.isOwner ? (
+
+                    <Button as={Link} to={`/manage/${fabric.id}`} color='orange' floated='right'>
+                        Manage Fabric
+                    </Button>
+                ) : fabric.liked ? (
+                    <Button loading={loading} onClick={unlikeFabric}>Unlike </Button>
+                ) : (
+                            <Button loading={loading} onClick={likeFabric} color='teal'>like </Button>
+                        )}
             </Segment>
         </Segment.Group>
     )

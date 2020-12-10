@@ -19,6 +19,7 @@ using Persistence;
 using Service.Security;
 using Application.Interfaces;
 using AutoMapper;
+using Service.Photos;
 
 namespace Api
 {
@@ -88,6 +89,8 @@ namespace Api
             });
             services.AddScoped<SJwtGenerator, JwtGenerator>();
             services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
 
 
         }
